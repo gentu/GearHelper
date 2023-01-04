@@ -6,6 +6,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import java.net.URL;
 
 public class Main implements IXposedHookLoadPackage{
 		@Override
@@ -87,8 +88,7 @@ public class Main implements IXposedHookLoadPackage{
             return s;
 						}
       			});
-
-  
+      			
       XposedHelpers.findAndHookMethod("com.sec.android.app.samsungapps.vlibrary.concreteloader.ConcreteDeviceInfoLoader", lpparam.classLoader, "getModelName", new XC_MethodReplacement() {
 						@Override
 						protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
@@ -99,11 +99,20 @@ public class Main implements IXposedHookLoadPackage{
 						}
       			});
       			
+      XposedHelpers.findAndHookMethod("com.sec.android.wallet.confirm.http.CheckWalletAvaliable", lpparam.classLoader, "a", new XC_MethodHook() {
+						@Override
+						protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+								String fakeresult = param.getResult().toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&openApi=(.+?)&", "&openApi=21&");
+								Log.i("GearHelper", "Hooked method8.5 called - " + fakeresult);
+            param.setResult(fakeresult);
+						}
+      			});      			
+      			
       			}
  //############################################################################################
 				if("com.samsung.android.app.watchmanager".equals(lpparam.packageName)) {
 
-  /*    XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.util.HostManagerUtils", lpparam.classLoader, "isSamsungDevice", new XC_MethodReplacement() {
+      XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.util.HostManagerUtils", lpparam.classLoader, "isSamsungDevice", new XC_MethodReplacement() {
 						@Override
 						protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
 								Log.i("GearHelper", "Hooked method9 called - " + param.method.getName());
@@ -111,20 +120,67 @@ public class Main implements IXposedHookLoadPackage{
 								flag = true;
 								return flag;
 						}
-      			});*/
+      			});
 
       XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.util.UHMDownloadManager", lpparam.classLoader, "getDownloadCheckServerURL", String.class, new XC_MethodHook() {
  						@Override
 						protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-								String fixed = (String) param.getResult().toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&sdkVer=(.+?)&", "&sdkVer=21&");
-								Log.i("GearHelper", "Hooked method10 called - " + fixed);
-								param.setResult(fixed.toString());
-								return;
+								String fakeresult = param.getResult().toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&sdkVer=(.+?)&", "&sdkVer=21&");
+								Log.i("GearHelper", "Hooked method10 called - " + fakeresult);
+								param.setResult(fakeresult);
 						}
-
       			});
 
+      XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.util.UHMDownloadManager", lpparam.classLoader, "getUpdateCheckServerURL", String.class, new XC_MethodHook() {
+ 						@Override
+						protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+								String fakeresult = param.getResult().toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&openApi=(.+?)&", "&openApi=21&");
+								Log.i("GearHelper", "Hooked method11 called - " + fakeresult);
+								param.setResult(fakeresult);
+						}
+      			});
+
+      XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.update.UpdateDownloadThread", lpparam.classLoader, "checkUpdate", URL.class, new XC_MethodHook() {
+ 						@Override
+						protected void beforeHookedMethod(final MethodHookParam param) throws Throwable {
+								String fakeargs = param.args[0].toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&openApi=(.+?)&", "&openApi=21&");
+								Log.i("GearHelper", "Hooked method12 called - " + fakeargs);
+								param.args[0] = new URL(fakeargs);
+						}
+      			});
+
+      XposedHelpers.findAndHookMethod("com.samsung.android.app.watchmanager.update.UpdateDownloadThread", lpparam.classLoader, "checkDownload", URL.class, new XC_MethodHook() {
+ 						@Override
+						protected void beforeHookedMethod(final MethodHookParam param) throws Throwable {
+								String fakeargs = param.args[0].toString().replaceAll("&deviceId=(.+?)&", "&deviceId=SM-N9005&").replaceAll("&openApi=(.+?)&", "&openApi=21&");
+								Log.i("GearHelper", "Hooked method13 called - " + fakeargs);
+								param.args[0] = new URL(fakeargs);
+						}
+      			});
+   
 				}
-				
+ //############################################################################################
+				if("com.samsung.android.gear2plugin".equals(lpparam.packageName)) {
+      XposedHelpers.findAndHookMethod("com.samsung.android.gear2plugin.util.HostManagerUtils", lpparam.classLoader, "isSamsungDevice", new XC_MethodReplacement() {
+						@Override
+						protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+								Log.i("GearHelper", "Hooked method14 called - " + param.method.getName());
+								boolean flag;
+								flag = true;
+								return flag;
+						}
+      			});
+      			
+      XposedHelpers.findAndHookMethod("com.samsung.android.gear2plugin.activity.stub.HMStubCommon", lpparam.classLoader, "getModelName", new XC_MethodReplacement() {
+						@Override
+						protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+								Log.i("GearHelper", "Hooked method15 called - " + param.method.getName());
+            String s;
+            s = "SM-N9005";
+            return s;
+						}
+      			}); 
+ 
+				}
 		}
 }
